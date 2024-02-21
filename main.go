@@ -2,15 +2,39 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
 
+var daftarUser = make([]User, 0)
+
 type User struct {
-	Nama string
-	// Nama     string `json:"nama" form:"nama"`
+	Nama     string `json:"nama" form:"nama"`
 	Hp       string `json:"hp" form:"hp"`
 	Password string `json:"password" form:"password"`
+}
+
+func LihatListUser(c echo.Context) error {
+	if len(daftarUser) == 0 {
+		return c.JSON(http.StatusOK, "data empty")
+	}
+	return c.JSON(http.StatusOK, daftarUser)
+}
+
+func Register() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input User
+		err := c.Bind(&input)
+		if err != nil {
+			if strings.Contains(err.Error(), "unsupport") {
+				return c.JSON(http.StatusUnsupportedMediaType, err.Error())
+			}
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+		daftarUser = append(daftarUser, input)
+		return c.JSON(http.StatusCreated, "selamat data sudah terdaftar")
+	}
 }
 
 func main() {
@@ -18,21 +42,8 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
-	e.GET("/users", func(c echo.Context) error {
-		var daftarUser = make([]User, 0)
-		daftarUser = append(daftarUser, User{Nama: "Jerry"})
-		daftarUser = append(daftarUser, User{Nama: "Malik"})
-
-		return c.JSON(http.StatusOK, daftarUser)
-	})
-	e.POST("/users", func(c echo.Context) error {
-		var input User
-		err := c.Bind(&input)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-		return c.JSON(http.StatusOK, input)
-	})
+	e.GET("/users", LihatListUser)
+	e.POST("/users", Register())
 	//users/089
 	//path parameter -> biasa digunakan untuk mencari SEBUAH data secara spesifik
 	e.DELETE("/users/:userID", func(c echo.Context) error {
