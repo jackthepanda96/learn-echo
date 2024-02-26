@@ -7,6 +7,7 @@ import (
 	"21-api/routes"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -16,6 +17,13 @@ func main() {
 
 	m := model.UserModel{Connection: db}     // bagian yang menghungkan coding kita ke database / bagian dimana kita ngoding untk ke DB
 	c := controller.UserController{Model: m} // bagian yang menghandle segala hal yang berurusan dengan HTTP / echo
+	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.Logger())
+	e.Use(middleware.CORS()) // ini aja cukup
+	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	// 	AllowOrigins: []string{"www.mangaku.net"},
+	// 	AllowMethods: []string{"POST", "GET"},
+	// })) // Cross origin resource sharing
 	routes.InitRoute(e, c)
 	e.Logger.Fatal(e.Start(":1323"))
 }

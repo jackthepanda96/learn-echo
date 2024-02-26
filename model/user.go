@@ -20,3 +20,18 @@ func (um *UserModel) AddUser(newData User) error {
 
 	return nil
 }
+
+func (um *UserModel) CekUser(hp string) bool {
+	var data User
+	if err := um.Connection.Where("hp = ?", hp).First(&data).Error; err != nil {
+		return false
+	}
+	return true
+}
+
+func (um *UserModel) Update(hp string, data User) error {
+	if err := um.Connection.Model(&data).Where("hp = ?", hp).Update("nama", data.Nama).Update("password", data.Password).Error; err != nil {
+		return err
+	}
+	return nil
+}

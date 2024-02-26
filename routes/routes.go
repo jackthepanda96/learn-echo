@@ -8,4 +8,5 @@ import (
 
 func InitRoute(c *echo.Echo, ctl controller.UserController) {
 	c.POST("/users", ctl.Register())
+	c.PUT("/users/:hp", ctl.Update())
 }
