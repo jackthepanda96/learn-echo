@@ -12,8 +12,8 @@ func GenerateJWT(hp string) (string, error) {
 	// custom data
 	data["hp"] = hp
 	// mandatory data
-	data["iat"] = time.Now()
-	data["exp"] = time.Now().Add(time.Hour * 3)
+	data["iat"] = time.Now().Unix()
+	data["exp"] = time.Now().Add(time.Hour * 3).Unix()
 
 	var proccessToken = jwt.NewWithClaims(jwt.SigningMethodHS256, data)
 
