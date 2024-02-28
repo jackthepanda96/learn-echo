@@ -1,6 +1,7 @@
 package config
 
 import (
+	"21-api/model"
 	"fmt"
 	"os"
 
@@ -8,6 +9,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
+
+var JWTSECRET = ""
 
 type AppConfig struct {
 	DBUsername string
@@ -17,7 +20,7 @@ type AppConfig struct {
 	DBName     string
 }
 
-func AssignEnv(c AppConfig) (AppConfig, bool) {
+func assignEnv(c AppConfig) (AppConfig, bool) {
 	var missing = false
 	if val, found := os.LookupEnv("DBUsername"); found {
 		c.DBUsername = val
@@ -44,6 +47,11 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
+	if val, found := os.LookupEnv("JWT_SECRET"); found {
+		JWTSECRET = val
+	} else {
+		missing = true
+	}
 
 	return c, missing
 }
@@ -51,10 +59,10 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 func InitConfig() AppConfig {
 	var result AppConfig
 	var missing = false
-	result, missing = AssignEnv(result)
+	result, missing = assignEnv(result)
 	if missing {
 		godotenv.Load(".env")
-		result, _ = AssignEnv(result)
+		result, _ = assignEnv(result)
 	}
 
 	return result
@@ -67,6 +75,8 @@ func InitSQL(c AppConfig) *gorm.DB {
 		fmt.Println("terjadi error", err.Error())
 		return nil
 	}
+
+	db.AutoMigrate(&model.User{})
 
 	return db
 }

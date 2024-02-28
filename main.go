@@ -20,10 +20,6 @@ func main() {
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS()) // ini aja cukup
-	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	// 	AllowOrigins: []string{"www.mangaku.net"},
-	// 	AllowMethods: []string{"POST", "GET"},
-	// })) // Cross origin resource sharing
 	routes.InitRoute(e, c)
 	e.Logger.Fatal(e.Start(":1323"))
 }

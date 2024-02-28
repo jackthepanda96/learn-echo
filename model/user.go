@@ -35,3 +35,29 @@ func (um *UserModel) Update(hp string, data User) error {
 	}
 	return nil
 }
+
+func (um *UserModel) GetAllUser() ([]User, error) {
+	var result []User
+
+	if err := um.Connection.Find(&result).Error; err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (um *UserModel) GetProfile(hp string) (User, error) {
+	var result User
+	if err := um.Connection.Where("hp = ?", hp).First(&result).Error; err != nil {
+		return User{}, err
+	}
+	return result, nil
+}
+
+func (um *UserModel) Login(hp string, password string) (User, error) {
+	var result User
+	if err := um.Connection.Where("hp = ? AND password = ?", hp, password).First(&result).Error; err != nil {
+		return User{}, err
+	}
+	return result, nil
+}
