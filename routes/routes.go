@@ -2,13 +2,13 @@ package routes
 
 import (
 	"21-api/config"
-	"21-api/controller"
+	"21-api/controller/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
-func InitRoute(c *echo.Echo, ctl controller.UserController) {
+func InitRoute(c *echo.Echo, ctl user.UserController) {
 	c.POST("/users", ctl.Register()) // register -> umum (boleh diakses semua orang)
 	c.POST("/login", ctl.Login())
 	c.GET("/users", ctl.ListUser(), echojwt.WithConfig(echojwt.Config{

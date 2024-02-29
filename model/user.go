@@ -3,9 +3,9 @@ package model
 import "gorm.io/gorm"
 
 type User struct {
-	Nama     string `json:"nama" form:"nama"`
-	Hp       string `json:"hp" form:"hp"`
-	Password string `json:"password" form:"password"`
+	Nama     string `json:"nama" form:"nama" validate:"required"`
+	Hp       string `json:"hp" form:"hp" validate:"required,max=13,min=10"`
+	Password string `json:"password" form:"password" validate:"required"`
 }
 
 type UserModel struct {
