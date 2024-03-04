@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -156,9 +157,8 @@ func (us *UserController) ListUser() echo.HandlerFunc {
 
 func (us *UserController) Profile() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var hp = c.Param("hp")
-		result, err := us.Model.GetProfile(hp)
-
+		var hpFromToken = middlewares.DecodeToken(c.Get("user").(*jwt.Token))
+		result, err := us.Model.GetProfile(hpFromToken)
 		if err != nil {
 			if strings.Contains(err.Error(), "not found") {
 				return c.JSON(http.StatusNotFound,
