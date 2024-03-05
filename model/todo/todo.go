@@ -34,7 +34,7 @@ func (tm *TodoModel) ListKegiatan(pemilik string) ([]Todo, error) {
 }
 
 func (tm *TodoModel) UpdateKegiatan(pemilik string, todoID uint, data Todo) (Todo, error) {
-	var qry = tm.Connection.Where("id = ?", todoID).Updates(data)
+	var qry = tm.Connection.Where("pemilik = ? AND id = ?", pemilik, todoID).Updates(data)
 	if err := qry.Error; err != nil {
 		return Todo{}, err
 	}

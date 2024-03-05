@@ -86,7 +86,6 @@ func (tc *TodoController) UpdateToDo() echo.HandlerFunc {
 
 		var inputProcess todo.Todo
 		inputProcess.Kegiatan = input.Kegiatan
-		inputProcess.Pemilik = hp
 
 		result, err := tc.Model.UpdateKegiatan(hp, uint(cnv), inputProcess)
 
