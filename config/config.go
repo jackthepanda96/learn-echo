@@ -1,7 +1,9 @@
 package config
 
 import (
-	"21-api/model"
+	"21-api/model/todo"
+	"21-api/model/user"
+
 	"fmt"
 	"os"
 
@@ -76,7 +78,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&user.User{}, &todo.Todo{})
 
 	return db
 }

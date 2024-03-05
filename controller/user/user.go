@@ -3,7 +3,7 @@ package user
 import (
 	"21-api/helper"
 	"21-api/middlewares"
-	"21-api/model"
+	model "21-api/model/user"
 	"fmt"
 	"log"
 	"net/http"

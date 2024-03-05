@@ -1,11 +1,16 @@
-package model
+package user
 
-import "gorm.io/gorm"
+import (
+	"21-api/model/todo"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
-	Nama     string `json:"nama" form:"nama" validate:"required"`
-	Hp       string `json:"hp" form:"hp" validate:"required,max=13,min=10"`
-	Password string `json:"password" form:"password" validate:"required"`
+	Nama     string
+	Hp       string `gorm:"type:varchar(13);primaryKey"`
+	Password string
+	Todos    []todo.Todo `gorm:"foreignKey:Pemilik;references:Hp"`
 }
 
 type UserModel struct {
