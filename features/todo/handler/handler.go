@@ -1,9 +1,9 @@
-package todo
+package handler
 
 import (
+	"21-api/features/todo"
 	"21-api/helper"
 	"21-api/middlewares"
-	"21-api/model/todo"
 	"log"
 	"net/http"
 	"strconv"
@@ -13,11 +13,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type TodoController struct {
-	Model todo.TodoModel
+type controller struct {
+	model todo.TodoModel
 }
 
-func (tc *TodoController) AddToDo() echo.HandlerFunc {
+func NewHandler(m todo.TodoModel) todo.TodoController {
+	return &controller{
+		model: m,
+	}
+}
+
+func (ct *controller) Add() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input ToDoRequest
 		err := c.Bind(&input)
@@ -25,14 +31,11 @@ func (tc *TodoController) AddToDo() echo.HandlerFunc {
 			log.Println("error bind data:", err.Error())
 			if strings.Contains(err.Error(), "unsupport") {
 				return c.JSON(http.StatusUnsupportedMediaType,
-					helper.ResponseFormat(http.StatusUnsupportedMediaType, "format data tidak didukung", nil))
+					helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.UserInputFormatError, nil))
 			}
 			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, "data yang dikirmkan tidak sesuai", nil))
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
-
-		// Cek middleware (extract token)
-		// c.Get("user").(*jwt.Token) -> notasi PASTI kalo mau mengambil jwt token pada echo
 
 		hp := middlewares.DecodeToken(c.Get("user").(*jwt.Token))
 
@@ -45,18 +48,18 @@ func (tc *TodoController) AddToDo() echo.HandlerFunc {
 		inputProcess.Kegiatan = input.Kegiatan
 		inputProcess.Pemilik = hp
 
-		result, err := tc.Model.Insert(inputProcess)
+		result, err := ct.model.InsertTodo(inputProcess)
 
 		if err != nil {
 			log.Println("error insert db:", err.Error())
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "terjadi kesalahan pada proses server", nil))
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
 		}
 
 		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "berhasil menambahkan kegiatan", result))
 	}
 }
 
-func (tc *TodoController) UpdateToDo() echo.HandlerFunc {
+func (ct *controller) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input ToDoRequest
 
@@ -87,7 +90,7 @@ func (tc *TodoController) UpdateToDo() echo.HandlerFunc {
 		var inputProcess todo.Todo
 		inputProcess.Kegiatan = input.Kegiatan
 
-		result, err := tc.Model.UpdateKegiatan(hp, uint(cnv), inputProcess)
+		result, err := ct.model.UpdateTodo(hp, uint(cnv), inputProcess)
 
 		if err != nil {
 			log.Println("error update db:", err.Error())
