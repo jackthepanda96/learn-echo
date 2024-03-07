@@ -1,6 +1,9 @@
 package user
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
+)
 
 // bagian yang berisi KONTRAK mengenai obyek yang digunakan / disepakati dalam proses coding kalian
 
@@ -12,14 +15,14 @@ type UserController interface {
 
 type UserService interface {
 	Register(newData User) error
-	Login(loginData User) (User, error)
-	Profile(hp string) (User, error)
+	Login(loginData User) (User, string, error)
+	Profile(token *jwt.Token) (User, error)
 }
 
 type UserModel interface {
 	InsertUser(newData User) error
 	UpdateUser(hp string, data User) error
-	Login(hp string, password string) (User, error)
+	Login(hp string) (User, error)
 	GetUserByHP(hp string) (User, error)
 }
 

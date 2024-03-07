@@ -1,10 +1,13 @@
 package todo
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
+)
 
 type TodoController interface {
 	Add() echo.HandlerFunc
-	Update() echo.HandlerFunc
+	// Update() echo.HandlerFunc
 	// Delete() echo.HandlerFunc
 	// ShowMyTodo() echo.HandlerFunc
 }
@@ -17,6 +20,8 @@ type TodoModel interface {
 }
 
 type TodoService interface {
+	AddTodo(pemilik *jwt.Token, kegiatanBaru Todo) (Todo, error)
+	// UpdateTodo(pemilik *jwt.Token, todoID string, data Todo) (Todo, error)
 }
 
 type Todo struct {

@@ -3,10 +3,12 @@ package services
 import (
 	"21-api/features/user"
 	"21-api/helper"
+	"21-api/middlewares"
 	"errors"
 	"log"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type service struct {
@@ -46,10 +48,40 @@ func (s *service) Register(newData user.User) error {
 	}
 	return nil
 }
-func (s *service) Login(loginData user.User) (user.User, error) {
-	return user.User{}, nil
+func (s *service) Login(loginData user.User) (user.User, string, error) {
+	var loginValidate user.Login
+	loginValidate.Hp = loginData.Hp
+	loginValidate.Password = loginData.Password
+	err := s.v.Struct(&loginValidate)
+	if err != nil {
+		log.Println("error validasi", err.Error())
+		return user.User{}, "", err
+	}
+
+	dbData, err := s.model.Login(loginValidate.Hp)
+	if err != nil {
+		return user.User{}, "", err
+	}
+
+	err = s.pm.ComparePassword(loginValidate.Password, dbData.Password)
+	if err != nil {
+		return user.User{}, "", errors.New(helper.UserCredentialError)
+	}
+
+	token, err := middlewares.GenerateJWT(dbData.Hp)
+	if err != nil {
+		return user.User{}, "", errors.New(helper.ServiceGeneralError)
+	}
+
+	return dbData, token, nil
 }
 
-func (s *service) Profile(hp string) (user.User, error) {
-	return user.User{}, nil
+func (s *service) Profile(token *jwt.Token) (user.User, error) {
+	decodeHp := middlewares.DecodeToken(token)
+	result, err := s.model.GetUserByHP(decodeHp)
+	if err != nil {
+		return user.User{}, err
+	}
+
+	return result, nil
 }

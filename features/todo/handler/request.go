@@ -1,5 +1,5 @@
 package handler
 
 type ToDoRequest struct {
-	Kegiatan string `json:"kegiatan" form:"kegiatan" validate:"required"`
+	Kegiatan string `json:"kegiatan" form:"kegiatan"`
 }

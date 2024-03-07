@@ -2,6 +2,7 @@ package data
 
 import (
 	"21-api/features/user"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -20,9 +21,19 @@ func New(db *gorm.DB) user.UserModel {
 }
 
 func (m *model) InsertUser(newData user.User) error {
-	err := m.connection.Model(&User{}).Create(&newData).Error
+	err := m.connection.Create(&newData).Error
+	// if err != nil {
+	// 	return err
+	// }
+
 	if err != nil {
-		return err
+		// defer func() {
+		// 	if err := recover(); err != nil {
+		// 		log.Println("error database process:", err)
+
+		// 	}
+		// }()
+		return errors.New("terjadi masalah pada database")
 	}
 
 	return nil
@@ -61,9 +72,9 @@ func (m *model) GetUserByHP(hp string) (user.User, error) {
 	return result, nil
 }
 
-func (m *model) Login(hp string, password string) (user.User, error) {
+func (m *model) Login(hp string) (user.User, error) {
 	var result user.User
-	if err := m.connection.Model(&User{}).Where("hp = ? AND password = ?", hp, password).First(&result).Error; err != nil {
+	if err := m.connection.Model(&User{}).Where("hp = ? ", hp).First(&result).Error; err != nil {
 		return user.User{}, err
 	}
 	return result, nil
