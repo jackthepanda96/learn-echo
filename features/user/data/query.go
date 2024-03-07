@@ -10,6 +10,9 @@ type model struct {
 	connection *gorm.DB
 }
 
+// yang kita butuhkan adalah sebuah model
+// tapi kenapa return function kok bukan obyek model?
+
 func New(db *gorm.DB) user.UserModel {
 	return &model{
 		connection: db,
@@ -17,7 +20,7 @@ func New(db *gorm.DB) user.UserModel {
 }
 
 func (m *model) InsertUser(newData user.User) error {
-	err := m.connection.Create(&newData).Error
+	err := m.connection.Model(&User{}).Create(&newData).Error
 	if err != nil {
 		return err
 	}
@@ -25,7 +28,7 @@ func (m *model) InsertUser(newData user.User) error {
 	return nil
 }
 
-func (m *model) CekUser(hp string) bool {
+func (m *model) cekUser(hp string) bool {
 	var data User
 	if err := m.connection.Where("hp = ?", hp).First(&data).Error; err != nil {
 		return false
@@ -52,7 +55,7 @@ func (m *model) GetAllUser() ([]user.User, error) {
 
 func (m *model) GetUserByHP(hp string) (user.User, error) {
 	var result user.User
-	if err := m.connection.Where("hp = ?", hp).First(&result).Error; err != nil {
+	if err := m.connection.Model(&User{}).Where("hp = ?", hp).First(&result).Error; err != nil {
 		return user.User{}, err
 	}
 	return result, nil
@@ -60,7 +63,7 @@ func (m *model) GetUserByHP(hp string) (user.User, error) {
 
 func (m *model) Login(hp string, password string) (user.User, error) {
 	var result user.User
-	if err := m.connection.Where("hp = ? AND password = ?", hp, password).First(&result).Error; err != nil {
+	if err := m.connection.Model(&User{}).Where("hp = ? AND password = ?", hp, password).First(&result).Error; err != nil {
 		return user.User{}, err
 	}
 	return result, nil

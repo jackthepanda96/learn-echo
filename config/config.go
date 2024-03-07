@@ -1,9 +1,8 @@
 package config
 
 import (
-	"21-api/model/todo"
-	"21-api/model/user"
-
+	todo "21-api/features/todo/data"
+	user "21-api/features/user/data"
 	"fmt"
 	"os"
 

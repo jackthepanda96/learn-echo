@@ -2,6 +2,8 @@ package user
 
 import "github.com/labstack/echo/v4"
 
+// bagian yang berisi KONTRAK mengenai obyek yang digunakan / disepakati dalam proses coding kalian
+
 type UserController interface {
 	Add() echo.HandlerFunc
 	Login() echo.HandlerFunc
@@ -11,6 +13,7 @@ type UserController interface {
 type UserService interface {
 	Register(newData User) error
 	Login(loginData User) (User, error)
+	Profile(hp string) (User, error)
 }
 
 type UserModel interface {
@@ -22,6 +25,17 @@ type UserModel interface {
 
 type User struct {
 	Nama     string
-	HP       string
+	Hp       string
 	Password string
+}
+
+type Login struct {
+	Hp       string `validate:"required,min=10,max=13,numeric"`
+	Password string `validate:"required,alphanum,min=8"`
+}
+
+type Register struct {
+	Nama     string `validate:"required,alpha"`
+	Hp       string `validate:"required,min=10,max=13,numeric"`
+	Password string `validate:"required,alphanum,min=8"`
 }

@@ -17,12 +17,13 @@ func New(db *gorm.DB) todo.TodoModel {
 	}
 }
 
-func (tm *model) InsertTodo(kegiatanBaru todo.Todo) (todo.Todo, error) {
-	if err := tm.connection.Create(&kegiatanBaru).Error; err != nil {
+func (tm *model) InsertTodo(pemilik string, kegiatanBaru todo.Todo) (todo.Todo, error) {
+	var inputProcess = Todo{Kegiatan: kegiatanBaru.Kegiatan, Pemilik: pemilik}
+	if err := tm.connection.Create(&inputProcess).Error; err != nil {
 		return todo.Todo{}, err
 	}
 
-	return kegiatanBaru, nil
+	return todo.Todo{Kegiatan: inputProcess.Kegiatan}, nil
 }
 
 func (tm *model) UpdateTodo(pemilik string, todoID uint, data todo.Todo) (todo.Todo, error) {

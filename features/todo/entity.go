@@ -10,7 +10,7 @@ type TodoController interface {
 }
 
 type TodoModel interface {
-	InsertTodo(kegiatanBaru Todo) (Todo, error)
+	InsertTodo(pemilik string, kegiatanBaru Todo) (Todo, error)
 	UpdateTodo(pemilik string, todoID uint, data Todo) (Todo, error)
 	// DeleteTodo()
 	GetTodoByOwner(pemilik string) ([]Todo, error)
@@ -21,5 +21,4 @@ type TodoService interface {
 
 type Todo struct {
 	Kegiatan string
-	Pemilik  string
 }
