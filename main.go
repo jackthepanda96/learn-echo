@@ -8,6 +8,8 @@ import (
 	"21-api/features/user/data"
 	"21-api/features/user/handler"
 	"21-api/features/user/services"
+	"21-api/helper"
+	"21-api/middlewares"
 	"21-api/routes"
 
 	"github.com/labstack/echo/v4"
@@ -20,11 +22,11 @@ func main() {
 	db := config.InitSQL(cfg)  // konek DB
 
 	userData := data.New(db)
-	userService := services.NewService(userData)
+	userService := services.NewService(userData, helper.NewPasswordManager(), middlewares.NewMidlewareJWT())
 	userHandler := handler.NewUserHandler(userService)
 
 	todoData := td.New(db)
-	todoService := ts.NewTodoService(todoData)
+	todoService := ts.NewTodoService(todoData, middlewares.NewMidlewareJWT())
 	todoHandler := th.NewHandler(todoService)
 
 	e.Pre(middleware.RemoveTrailingSlash())

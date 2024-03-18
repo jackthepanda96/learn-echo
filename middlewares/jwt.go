@@ -9,7 +9,18 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJWT(hp string) (string, error) {
+type mdJwt struct{}
+
+type JwtInterface interface {
+	GenerateJWT(hp string) (string, error)
+	DecodeToken(token *jwt.Token) string
+}
+
+func NewMidlewareJWT() JwtInterface {
+	return &mdJwt{}
+}
+
+func (md *mdJwt) GenerateJWT(hp string) (string, error) {
 	var data = jwt.MapClaims{}
 	// custom data
 	data["hp"] = hp
@@ -34,7 +45,7 @@ func GenerateJWT(hp string) (string, error) {
 	return result, nil
 }
 
-func DecodeToken(token *jwt.Token) string {
+func (md *mdJwt) DecodeToken(token *jwt.Token) string {
 	var result string
 	var claim = token.Claims.(jwt.MapClaims)
 

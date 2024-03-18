@@ -14,13 +14,15 @@ import (
 type service struct {
 	model user.UserModel
 	pm    helper.PasswordManager
+	md    middlewares.JwtInterface
 	v     *validator.Validate
 }
 
-func NewService(m user.UserModel) user.UserService {
+func NewService(m user.UserModel, pm helper.PasswordManager, md middlewares.JwtInterface) user.UserService {
 	return &service{
 		model: m,
-		pm:    helper.NewPasswordManager(),
+		pm:    pm,
+		md:    md,
 		v:     validator.New(),
 	}
 }
@@ -68,8 +70,14 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 		return user.User{}, "", errors.New(helper.UserCredentialError)
 	}
 
-	token, err := middlewares.GenerateJWT(dbData.Hp)
+	token, err := s.md.GenerateJWT(dbData.Hp)
 	if err != nil {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("something happend:", err)
+
+			}
+		}()
 		return user.User{}, "", errors.New(helper.ServiceGeneralError)
 	}
 
@@ -77,7 +85,7 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 }
 
 func (s *service) Profile(token *jwt.Token) (user.User, error) {
-	decodeHp := middlewares.DecodeToken(token)
+	decodeHp := s.md.DecodeToken(token)
 	result, err := s.model.GetUserByHP(decodeHp)
 	if err != nil {
 		return user.User{}, err

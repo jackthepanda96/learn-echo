@@ -1,0 +1,24 @@
+mode: set
+21-api/features/user/services/services.go:21.108,28.2 1 1
+21-api/features/user/services/services.go:30.53,36.16 6 1
+21-api/features/user/services/services.go:36.16,39.3 2 1
+21-api/features/user/services/services.go:41.2,42.16 2 1
+21-api/features/user/services/services.go:42.16,44.3 1 1
+21-api/features/user/services/services.go:45.2,48.16 3 1
+21-api/features/user/services/services.go:48.16,50.3 1 1
+21-api/features/user/services/services.go:51.2,51.12 1 1
+21-api/features/user/services/services.go:53.73,58.16 5 1
+21-api/features/user/services/services.go:58.16,61.3 2 1
+21-api/features/user/services/services.go:63.2,64.16 2 1
+21-api/features/user/services/services.go:64.16,66.3 1 1
+21-api/features/user/services/services.go:68.2,69.16 2 1
+21-api/features/user/services/services.go:69.16,71.3 1 1
+21-api/features/user/services/services.go:73.2,74.16 2 1
+21-api/features/user/services/services.go:74.16,75.16 1 1
+21-api/features/user/services/services.go:75.16,76.36 1 1
+21-api/features/user/services/services.go:76.36,79.5 1 0
+21-api/features/user/services/services.go:81.3,81.65 1 1
+21-api/features/user/services/services.go:84.2,84.27 1 1
+21-api/features/user/services/services.go:87.64,90.16 3 0
+21-api/features/user/services/services.go:90.16,92.3 1 0
+21-api/features/user/services/services.go:94.2,94.20 1 0

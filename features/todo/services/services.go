@@ -12,19 +12,21 @@ import (
 )
 
 type service struct {
-	m todo.TodoModel
-	v *validator.Validate
+	m  todo.TodoModel
+	v  *validator.Validate
+	md middlewares.JwtInterface
 }
 
-func NewTodoService(model todo.TodoModel) todo.TodoService {
+func NewTodoService(model todo.TodoModel, md middlewares.JwtInterface) todo.TodoService {
 	return &service{
-		m: model,
-		v: validator.New(),
+		m:  model,
+		v:  validator.New(),
+		md: md,
 	}
 }
 
 func (s *service) AddTodo(pemilik *jwt.Token, kegiatanBaru todo.Todo) (todo.Todo, error) {
-	hp := middlewares.DecodeToken(pemilik)
+	hp := s.md.DecodeToken(pemilik)
 	if hp == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return todo.Todo{}, errors.New("data tidak valid")
